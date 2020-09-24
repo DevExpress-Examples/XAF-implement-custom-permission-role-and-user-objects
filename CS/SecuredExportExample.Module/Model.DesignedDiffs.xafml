@@ -1,29 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application Title="SecuredExportExample" Logo="ExpressAppLogo">
   <SchemaModules>
-    <SchemaModule Name="SystemModule" Version="12.1.2.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="20.1.7.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
     <DetailView Id="Employee_DetailView">
       <Layout>
         <LayoutGroup Id="Main" RelativeSize="100" ImageName="">
-          <LayoutGroup Id="SimpleEditors" RelativeSize="11" ImageName="">
-            <LayoutGroup Id="SecurityUserBase" RelativeSize="100" ImageName="">
-              <LayoutItem Id="UserName" SizeConstraintsType="Default" Index="0" RelativeSize="51" />
-              <LayoutGroup Id="Auto36212934-37b4-4875-9120-dc52a23d7b95" ShowCaption="False" Caption="" Direction="Horizontal" Index="1" RelativeSize="48" IsNewNode="True">
-                <LayoutItem Id="IsActive" ViewItem="IsActive" SizeConstraintsType="Default" Index="0" RelativeSize="49" IsNewNode="True" />
-                <LayoutItem Id="ChangePasswordOnFirstLogon" ViewItem="ChangePasswordOnFirstLogon" SizeConstraintsType="Default" Index="1" RelativeSize="50" IsNewNode="True" />
-              </LayoutGroup>
-              <LayoutItem Id="IsActive" SizeConstraintsType="Default" Index="1" RelativeSize="32" Removed="True" />
-              <LayoutItem Id="ChangePasswordOnFirstLogon" SizeConstraintsType="Default" Index="2" RelativeSize="32" Removed="True" />
-            </LayoutGroup>
-          </LayoutGroup>
+          <LayoutGroup Id="SimpleEditors" RelativeSize="11" ImageName="" />
           <TabbedGroup Id="Tabs" Index="1" RelativeSize="88">
             <LayoutGroup Id="Tasks" RelativeSize="100" ImageName="BO_Task">
-              <LayoutItem Id="Tasks" SizeConstraintsType="Default" RelativeSize="100" />
+              <LayoutItem Id="Tasks" SizeConstraintsType="Default" RelativeSize="100" ViewItem="Tasks" />
             </LayoutGroup>
             <LayoutGroup Id="Roles" RelativeSize="100" ImageName="BO_Role">
-              <LayoutItem Id="Roles" SizeConstraintsType="Default" RelativeSize="100" />
+              <LayoutItem Id="Roles" SizeConstraintsType="Default" RelativeSize="100" ViewItem="Roles" />
             </LayoutGroup>
           </TabbedGroup>
         </LayoutGroup>
@@ -40,30 +30,21 @@
               <LayoutItem Id="CanExport" ViewItem="CanExport" SizeConstraintsType="Default" Index="2" RelativeSize="27" IsNewNode="True" />
             </LayoutGroup>
             <LayoutGroup Id="ExtendedSecurityRole" Caption="Can Export" ImageName="" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" Direction="Horizontal" RelativeSize="25" Index="4" ShowCaption="True" Removed="True">
-              <LayoutItem Id="CanExport" Removed="True" />
-            </LayoutGroup>
-            <LayoutGroup Id="SecuritySystemRoleBase" RelativeSize="7" ImageName="" Index="5" Direction="Horizontal" Removed="True">
-              <LayoutItem Id="CanEditModel" Removed="True" />
-              <LayoutItem Id="IsAdministrative" Removed="True" />
-              <LayoutItem Id="Name" Removed="True" />
+              <LayoutItem Id="CanExport" ViewItem="CanExport" Removed="True" />
             </LayoutGroup>
           </LayoutGroup>
           <TabbedGroup Id="Tabs" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="85" Index="1">
             <LayoutGroup Id="Users" Caption="Users" ImageName="BO_User" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" RelativeSize="100">
-              <LayoutItem Id="Users" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" SizeConstraintsType="Default" RelativeSize="100" />
-            </LayoutGroup>
-            <LayoutGroup Id="ChildRoles" RelativeSize="100" ImageName="BO_Role" Caption="Child Roles" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default">
-              <LayoutItem Id="ChildRoles" SizeConstraintsType="Default" RelativeSize="100" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" />
-            </LayoutGroup>
-            <LayoutGroup Id="ParentRoles" RelativeSize="100" ImageName="BO_Role" Caption="Parent Roles" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default">
-              <LayoutItem Id="ParentRoles" SizeConstraintsType="Default" RelativeSize="100" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" />
-            </LayoutGroup>
-            <LayoutGroup Id="TypePermissionMatrix" RelativeSize="100" ImageName="BO_Security_Permission_Type" Caption="Data Access Permissions" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default">
-              <LayoutItem Id="TypePermissionMatrix" SizeConstraintsType="Default" RelativeSize="100" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" />
+              <LayoutItem Id="Users" CaptionLocation="Default" CaptionWordWrap="Default" CaptionHorizontalAlignment="Default" CaptionVerticalAlignment="Default" SizeConstraintsType="Default" RelativeSize="100" ViewItem="Users" />
             </LayoutGroup>
           </TabbedGroup>
         </LayoutGroup>
       </Layout>
     </DetailView>
+    <ListView Id="PermissionPolicyUser_Roles_ListView">
+      <Columns>
+        <ColumnInfo Id="Can Export" PropertyName="&lt;ExtendedSecurityRole&gt;CanExport" IsNewNode="True" />
+      </Columns>
+    </ListView>
   </Views>
 </Application>
