@@ -9,6 +9,7 @@ using DevExpress.ExpressApp.Xpo;
 using MySolutionXPO.Blazor.Server.Services;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.ExpressApp.Core;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionXPO.Blazor.Server;
 
@@ -41,11 +42,11 @@ public class Startup {
                     options.AllowValidationDetailsAccess = false;
                 })
                 .Add<MySolutionXPO.Module.MySolutionXPOModule>()
-            	.Add<MySolutionXPOBlazorModule>();
+                .Add<MySolutionXPOBlazorModule>();
             builder.ObjectSpaceProviders
                 .AddSecuredXpo((serviceProvider, options) => {
                     string connectionString = null;
-                    if(Configuration.GetConnectionString("ConnectionString") != null) {
+                    if (Configuration.GetConnectionString("ConnectionString") != null) {
                         connectionString = Configuration.GetConnectionString("ConnectionString");
                     }
 #if EASYTEST
@@ -61,14 +62,32 @@ public class Startup {
                 .AddNonPersistent();
             builder.Security
                 .UseIntegratedMode(options => {
-                    options.RoleType = typeof(PermissionPolicyRole);
+                    options.RoleType = typeof(ExtendedSecurityRole);
                     // ApplicationUser descends from PermissionPolicyUser and supports the OAuth authentication. For more information, refer to the following topic: https://docs.devexpress.com/eXpressAppFramework/402197
                     // If your application uses PermissionPolicyUser or a custom user type, set the UserType property as follows:
-                    options.UserType = typeof(MySolutionXPO.Module.BusinessObjects.ApplicationUser);
+                    options.UserType = typeof(ApplicationUser);
                     // ApplicationUserLoginInfo is only necessary for applications that use the ApplicationUser user type.
                     // If you use PermissionPolicyUser or a custom user type, comment out the following line:
-                    options.UserLoginInfoType = typeof(MySolutionXPO.Module.BusinessObjects.ApplicationUserLoginInfo);
+                    options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
                     options.UseXpoPermissionsCaching();
+                    options.Events.OnSecurityStrategyCreated = securityStrategy => {
+                        ((SecurityStrategy)securityStrategy).CustomizeRequestProcessors += delegate (object sender, CustomizeRequestProcessorsEventArgs e) {
+                            List<IOperationPermission> result = new List<IOperationPermission>();
+                            SecurityStrategyComplex security = sender as SecurityStrategyComplex;
+                            if (security != null) {
+                                ApplicationUser user = security.User as ApplicationUser;
+                                if (user != null) {
+                                    foreach (ExtendedSecurityRole role in user.Roles) {
+                                        if (role.CanExport) {
+                                            result.Add(new ExportPermission());
+                                        }
+                                    }
+                                }
+                            }
+                            IPermissionDictionary permissionDictionary = new PermissionDictionary((IEnumerable<IOperationPermission>)result);
+                            e.Processors.Add(typeof(ExportPermissionRequest), new ExportPermissionRequestProcessor(permissionDictionary));
+                        };
+                    };
                 })
                 .AddPasswordAuthentication(options => {
                     options.IsSupportChangePassword = true;
@@ -81,10 +100,9 @@ public class Startup {
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-        if(env.IsDevelopment()) {
+        if (env.IsDevelopment()) {
             app.UseDeveloperExceptionPage();
-        }
-        else {
+        } else {
             app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. To change this for production scenarios, see: https://aka.ms/aspnetcore-hsts.
             app.UseHsts();

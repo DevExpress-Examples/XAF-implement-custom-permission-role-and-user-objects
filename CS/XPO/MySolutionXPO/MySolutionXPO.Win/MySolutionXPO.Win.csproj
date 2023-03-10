@@ -39,4 +39,7 @@
     <PackageReference Include="DevExpress.RichEdit.Export" Version="22.2.4" />
     <PackageReference Include="DevExpress.Win.Design" Version="22.2.4" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MySolutionXPO.Module\MySolutionXPO.Module.csproj" />
+  </ItemGroup>
 </Project>

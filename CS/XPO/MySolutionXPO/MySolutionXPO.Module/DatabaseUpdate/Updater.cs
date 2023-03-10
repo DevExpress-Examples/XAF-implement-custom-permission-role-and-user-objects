@@ -9,7 +9,8 @@ using DevExpress.Xpo;
 using DevExpress.ExpressApp.Xpo;
 using DevExpress.Persistent.BaseImpl;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
-using MySolutionXPO.Module.BusinessObjects;
+using MySolutionXPO.Module.Security;
+using dxTestSolution.Module.BusinessObjects;
 
 namespace MySolutionXPO.Module.DatabaseUpdate;
 
@@ -27,6 +28,8 @@ public class Updater : ModuleUpdater {
         //    theObject.Name = name;
         //}
 #if !RELEASE
+        ExtendedSecurityRole defaultRole = CreateDefaultRole();
+        ExtendedSecurityRole exportRole = CreateExporterRole();
         ApplicationUser sampleUser = ObjectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == "User");
         if(sampleUser == null) {
             sampleUser = ObjectSpace.CreateObject<ApplicationUser>();
@@ -38,9 +41,25 @@ public class Updater : ModuleUpdater {
             // Commit the user object to the database before you create a UserLoginInfo object. This will correctly initialize the user key property.
             ObjectSpace.CommitChanges(); //This line persists created object(s).
             ((ISecurityUserWithLoginInfo)sampleUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, ObjectSpace.GetKeyValueAsString(sampleUser));
+            sampleUser.Roles.Add(defaultRole);
         }
-        PermissionPolicyRole defaultRole = CreateDefaultRole();
-        sampleUser.Roles.Add(defaultRole);
+        ApplicationUser exportUser = ObjectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == "exportUser");
+        if (exportUser == null) {
+            exportUser = ObjectSpace.CreateObject<ApplicationUser>();
+            exportUser.UserName = "exportUser";
+            // Set a password if the standard authentication type is used
+            exportUser.SetPassword("");
+
+            // The UserLoginInfo object requires a user object Id (Oid).
+            // Commit the user object to the database before you create a UserLoginInfo object. This will correctly initialize the user key property.
+            ObjectSpace.CommitChanges(); //This line persists created object(s).
+            ((ISecurityUserWithLoginInfo)exportUser).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, ObjectSpace.GetKeyValueAsString(exportUser));
+            exportUser.Roles.Add(defaultRole);
+            exportUser.Roles.Add(exportRole);
+        }
+
+       
+      
 
         ApplicationUser userAdmin = ObjectSpace.FirstOrDefault<ApplicationUser>(u => u.UserName == "Admin");
         if(userAdmin == null) {
@@ -54,10 +73,10 @@ public class Updater : ModuleUpdater {
             ObjectSpace.CommitChanges(); //This line persists created object(s).
             ((ISecurityUserWithLoginInfo)userAdmin).CreateUserLoginInfo(SecurityDefaults.PasswordAuthentication, ObjectSpace.GetKeyValueAsString(userAdmin));
         }
-		// If a role with the Administrators name doesn't exist in the database, create this role
-        PermissionPolicyRole adminRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(r => r.Name == "Administrators");
+        // If a role with the Administrators name doesn't exist in the database, create this role
+        ExtendedSecurityRole adminRole = ObjectSpace.FirstOrDefault<ExtendedSecurityRole>(r => r.Name == "Administrators");
         if(adminRole == null) {
-            adminRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+            adminRole = ObjectSpace.CreateObject<ExtendedSecurityRole>();
             adminRole.Name = "Administrators";
         }
         adminRole.IsAdministrative = true;
@@ -71,22 +90,37 @@ public class Updater : ModuleUpdater {
         //    RenameColumn("DomainObject1Table", "OldColumnName", "NewColumnName");
         //}
     }
-    private PermissionPolicyRole CreateDefaultRole() {
-        PermissionPolicyRole defaultRole = ObjectSpace.FirstOrDefault<PermissionPolicyRole>(role => role.Name == "Default");
+    private ExtendedSecurityRole CreateDefaultRole() {
+        ExtendedSecurityRole defaultRole = ObjectSpace.FirstOrDefault<ExtendedSecurityRole>(role => role.Name == "Default");
         if(defaultRole == null) {
-            defaultRole = ObjectSpace.CreateObject<PermissionPolicyRole>();
+            defaultRole = ObjectSpace.CreateObject<ExtendedSecurityRole>();
             defaultRole.Name = "Default";
 
 			defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read, cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails", SecurityPermissionState.Allow);
 			defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
 			defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<PermissionPolicyRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
+            defaultRole.AddTypePermissionsRecursively<ExtendedSecurityRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
             defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
 			defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
+
+            defaultRole.AddTypePermission<Contact>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
+            defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/Contact_ListView", SecurityPermissionState.Allow);
+
         }
         return defaultRole;
+    }
+    private ExtendedSecurityRole CreateExporterRole() {
+        ExtendedSecurityRole exporterRole = ObjectSpace.FirstOrDefault<ExtendedSecurityRole>(role => role.Name == "Exporter");
+        if (exporterRole == null) {
+            exporterRole = ObjectSpace.CreateObject<ExtendedSecurityRole>();
+            exporterRole.Name = "Exporter";
+            exporterRole.CanExport = true;
+            exporterRole.AddTypePermission<Contact>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
+            exporterRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/Contact_ListView", SecurityPermissionState.Allow);
+        }
+        return exporterRole;
     }
 }

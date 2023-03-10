@@ -9,6 +9,7 @@ using DevExpress.Persistent.BaseImpl;
 using DevExpress.XtraEditors;
 using DevExpress.Persistent.BaseImpl.PermissionPolicy;
 using DevExpress.ExpressApp.Design;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionXPO.Win;
 
@@ -35,9 +36,9 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
             .AddNonPersistent();
         builder.Security
             .UseIntegratedMode(options => {
-                options.RoleType = typeof(PermissionPolicyRole);
-                options.UserType = typeof(MySolutionXPO.Module.BusinessObjects.ApplicationUser);
-                options.UserLoginInfoType = typeof(MySolutionXPO.Module.BusinessObjects.ApplicationUserLoginInfo);
+                options.RoleType = typeof(ExtendedSecurityRole);
+                options.UserType = typeof(ApplicationUser);
+                options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
                 options.UseXpoPermissionsCaching();
             })
             .UsePasswordAuthentication();
