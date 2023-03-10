@@ -40,6 +40,24 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
                 options.UserType = typeof(ApplicationUser);
                 options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
                 options.UseXpoPermissionsCaching();
+                options.Events.OnSecurityStrategyCreated = securityStrategy => {
+                    ((SecurityStrategy)securityStrategy).CustomizeRequestProcessors += delegate (object sender, CustomizeRequestProcessorsEventArgs e) {
+                        List<IOperationPermission> result = new List<IOperationPermission>();
+                        SecurityStrategyComplex security = sender as SecurityStrategyComplex;
+                        if (security != null) {
+                            ApplicationUser user = security.User as ApplicationUser;
+                            if (user != null) {
+                                foreach (ExtendedSecurityRole role in user.Roles) {
+                                    if (role.CanExport) {
+                                        result.Add(new ExportPermission());
+                                    }
+                                }
+                            }
+                        }
+                        IPermissionDictionary permissionDictionary = new PermissionDictionary((IEnumerable<IOperationPermission>)result);
+                        e.Processors.Add(typeof(ExportPermissionRequest), new ExportPermissionRequestProcessor(permissionDictionary));
+                    };
+                };
             })
             .UsePasswordAuthentication();
         builder.AddBuildStep(application => {
