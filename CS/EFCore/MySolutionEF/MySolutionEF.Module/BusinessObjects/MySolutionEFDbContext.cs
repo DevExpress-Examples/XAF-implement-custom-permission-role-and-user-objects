@@ -5,6 +5,8 @@ using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.Persistent.BaseImpl.EF;
 using DevExpress.ExpressApp.Design;
 using DevExpress.ExpressApp.EFCore.DesignTime;
+using MySolutionEF.Module.Security;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionEF.Module.BusinessObjects;
 
@@ -37,15 +39,16 @@ public class MySolutionEFEFCoreDbContext : DbContext {
 	//public DbSet<ModuleInfo> ModulesInfo { get; set; }
 	public DbSet<ModelDifference> ModelDifferences { get; set; }
 	public DbSet<ModelDifferenceAspect> ModelDifferenceAspects { get; set; }
-	public DbSet<PermissionPolicyRole> Roles { get; set; }
-	public DbSet<MySolutionEF.Module.BusinessObjects.ApplicationUser> Users { get; set; }
-    public DbSet<MySolutionEF.Module.BusinessObjects.ApplicationUserLoginInfo> UserLoginInfos { get; set; }
+	public DbSet<ExtendedSecurityRole> Roles { get; set; }
+	public DbSet<ApplicationUser> Users { get; set; }
+    public DbSet<Contact> Contacts { get; set; }
+    public DbSet<ApplicationUserLoginInfo> UserLoginInfos { get; set; }
 	public DbSet<ReportDataV2> ReportDataV2 { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
         modelBuilder.HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotificationsWithOriginalValues);
-        modelBuilder.Entity<MySolutionEF.Module.BusinessObjects.ApplicationUserLoginInfo>(b => {
+        modelBuilder.Entity<ApplicationUserLoginInfo>(b => {
             b.HasIndex(nameof(DevExpress.ExpressApp.Security.ISecurityUserLoginInfo.LoginProviderName), nameof(DevExpress.ExpressApp.Security.ISecurityUserLoginInfo.ProviderUserKey)).IsUnique();
         });
         modelBuilder.Entity<ModelDifference>()

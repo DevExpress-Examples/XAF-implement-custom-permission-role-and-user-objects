@@ -4,11 +4,13 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 
-namespace MySolutionEF.Module.BusinessObjects;
+namespace MySolutionEF.Module.Security;
 
 [DefaultProperty(nameof(UserName))]
-public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo {
-    public ApplicationUser() : base() {
+public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo
+{
+    public ApplicationUser() : base()
+    {
         UserLogins = new ObservableCollection<ApplicationUserLoginInfo>();
     }
 
@@ -18,7 +20,8 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo 
 
     IEnumerable<ISecurityUserLoginInfo> IOAuthSecurityUser.UserLogins => UserLogins.OfType<ISecurityUserLoginInfo>();
 
-    ISecurityUserLoginInfo ISecurityUserWithLoginInfo.CreateUserLoginInfo(string loginProviderName, string providerUserKey) {
+    ISecurityUserLoginInfo ISecurityUserWithLoginInfo.CreateUserLoginInfo(string loginProviderName, string providerUserKey)
+    {
         ApplicationUserLoginInfo result = ((IObjectSpaceLink)this).ObjectSpace.CreateObject<ApplicationUserLoginInfo>();
         result.LoginProviderName = loginProviderName;
         result.ProviderUserKey = providerUserKey;

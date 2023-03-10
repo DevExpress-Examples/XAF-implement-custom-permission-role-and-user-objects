@@ -6,10 +6,11 @@ using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.ConditionalAppearance;
 using DevExpress.ExpressApp.Security;
 
-namespace MySolutionEF.Module.BusinessObjects;
+namespace MySolutionEF.Module.Security;
 
 [Table("PermissionPolicyUserLoginInfo")]
-public class ApplicationUserLoginInfo : ISecurityUserLoginInfo {
+public class ApplicationUserLoginInfo : ISecurityUserLoginInfo
+{
 
     public ApplicationUserLoginInfo() { }
 

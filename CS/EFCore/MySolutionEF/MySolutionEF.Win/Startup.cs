@@ -11,6 +11,8 @@ using DevExpress.EntityFrameworkCore.Security;
 using DevExpress.XtraEditors;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.ExpressApp.Design;
+using MySolutionEF.Module.Security;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionEF.Win;
 
@@ -43,9 +45,27 @@ public class ApplicationBuilder : IDesignTimeApplicationFactory {
             .AddNonPersistent();
         builder.Security
             .UseIntegratedMode(options => {
-                options.RoleType = typeof(PermissionPolicyRole);
-                options.UserType = typeof(MySolutionEF.Module.BusinessObjects.ApplicationUser);
-                options.UserLoginInfoType = typeof(MySolutionEF.Module.BusinessObjects.ApplicationUserLoginInfo);
+                options.RoleType = typeof(ExtendedSecurityRole);
+                options.UserType = typeof(ApplicationUser);
+                options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
+                options.Events.OnSecurityStrategyCreated = securityStrategy => {
+                    ((SecurityStrategy)securityStrategy).CustomizeRequestProcessors += delegate (object sender, CustomizeRequestProcessorsEventArgs e) {
+                        List<IOperationPermission> result = new List<IOperationPermission>();
+                        SecurityStrategyComplex security = sender as SecurityStrategyComplex;
+                        if (security != null) {
+                            ApplicationUser user = security.User as ApplicationUser;
+                            if (user != null) {
+                                foreach (ExtendedSecurityRole role in user.Roles) {
+                                    if (role.CanExport) {
+                                        result.Add(new ExportPermission());
+                                    }
+                                }
+                            }
+                        }
+                        IPermissionDictionary permissionDictionary = new PermissionDictionary((IEnumerable<IOperationPermission>)result);
+                        e.Processors.Add(typeof(ExportPermissionRequest), new ExportPermissionRequestProcessor(permissionDictionary));
+                    };
+                };
             })
             .UsePasswordAuthentication();
         builder.AddBuildStep(application => {

@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using MySolutionEF.Blazor.Server.Services;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.ExpressApp.Core;
+using MySolutionEF.Module.Security;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionEF.Blazor.Server;
 
@@ -66,13 +68,31 @@ public class Startup {
                 .AddNonPersistent();
             builder.Security
                 .UseIntegratedMode(options => {
-                    options.RoleType = typeof(PermissionPolicyRole);
+                    options.RoleType = typeof(ExtendedSecurityRole);
                     // ApplicationUser descends from PermissionPolicyUser and supports the OAuth authentication. For more information, refer to the following topic: https://docs.devexpress.com/eXpressAppFramework/402197
                     // If your application uses PermissionPolicyUser or a custom user type, set the UserType property as follows:
-                    options.UserType = typeof(MySolutionEF.Module.BusinessObjects.ApplicationUser);
+                    options.UserType = typeof(ApplicationUser);
                     // ApplicationUserLoginInfo is only necessary for applications that use the ApplicationUser user type.
                     // If you use PermissionPolicyUser or a custom user type, comment out the following line:
-                    options.UserLoginInfoType = typeof(MySolutionEF.Module.BusinessObjects.ApplicationUserLoginInfo);
+                    options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
+                    options.Events.OnSecurityStrategyCreated = securityStrategy => {
+                        ((SecurityStrategy)securityStrategy).CustomizeRequestProcessors += delegate (object sender, CustomizeRequestProcessorsEventArgs e) {
+                            List<IOperationPermission> result = new List<IOperationPermission>();
+                            SecurityStrategyComplex security = sender as SecurityStrategyComplex;
+                            if (security != null) {
+                                ApplicationUser user = security.User as ApplicationUser;
+                                if (user != null) {
+                                    foreach (ExtendedSecurityRole role in user.Roles) {
+                                        if (role.CanExport) {
+                                            result.Add(new ExportPermission());
+                                        }
+                                    }
+                                }
+                            }
+                            IPermissionDictionary permissionDictionary = new PermissionDictionary((IEnumerable<IOperationPermission>)result);
+                            e.Processors.Add(typeof(ExportPermissionRequest), new ExportPermissionRequestProcessor(permissionDictionary));
+                        };
+                    };
                 })
                 .AddPasswordAuthentication(options => {
                     options.IsSupportChangePassword = true;

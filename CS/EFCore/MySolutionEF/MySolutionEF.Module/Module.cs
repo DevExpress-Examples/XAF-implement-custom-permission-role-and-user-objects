@@ -10,6 +10,8 @@ using DevExpress.ExpressApp.Model.Core;
 using DevExpress.ExpressApp.Model.DomainLogics;
 using DevExpress.ExpressApp.Model.NodeGenerators;
 using DevExpress.ExpressApp.ReportsV2;
+using MySolutionEF.Module.Security;
+using MySolutionXPO.Module.Security;
 
 namespace MySolutionEF.Module;
 
@@ -19,8 +21,8 @@ public sealed class MySolutionEFModule : ModuleBase {
 		// 
 		// MySolutionEFModule
 		// 
-		AdditionalExportedTypes.Add(typeof(MySolutionEF.Module.BusinessObjects.ApplicationUser));
-		AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.PermissionPolicy.PermissionPolicyRole));
+		AdditionalExportedTypes.Add(typeof(ApplicationUser));
+		AdditionalExportedTypes.Add(typeof(ExtendedSecurityRole));
 		AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.ModelDifference));
 		AdditionalExportedTypes.Add(typeof(DevExpress.Persistent.BaseImpl.EF.ModelDifferenceAspect));
 		RequiredModuleTypes.Add(typeof(DevExpress.ExpressApp.SystemModule.SystemModule));
