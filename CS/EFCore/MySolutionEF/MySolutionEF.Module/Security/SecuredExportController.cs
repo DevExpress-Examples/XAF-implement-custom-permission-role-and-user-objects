@@ -11,16 +11,14 @@ namespace MySolutionXPO.Module.Security {
             ExportController controller = Frame.GetController<ExportController>();
             if (controller != null) {
                 controller.ExportAction.Executing += ExportAction_Executing;
-                IRequestSecurity requestSecurity = SecuritySystem.Instance as IRequestSecurity;
-                if (requestSecurity != null) {
-                    controller.Active.SetItemValue("Security",
-                       requestSecurity.IsGranted(new ExportPermissionRequest()));
-                }
+                IRequestSecurity requestSecurity = (IRequestSecurity)Application.Security;
+                controller.Active.SetItemValue("Security",
+                    requestSecurity.IsGranted(new ExportPermissionRequest()));
             }
         }
         void ExportAction_Executing(object sender, System.ComponentModel.CancelEventArgs e) {
-            IRequestSecurity requestSecurity = SecuritySystem.Instance as IRequestSecurity;
-            if (!requestSecurity.IsGranted(new ExportPermissionRequest())) {
+            IRequestSecurity requestSecurity = (IRequestSecurity)Application.Security;
+            if (requestSecurity.IsGranted(new ExportPermissionRequest())) {
                 throw new UserFriendlyException("Export operation is prohibited.");
             }
         }
