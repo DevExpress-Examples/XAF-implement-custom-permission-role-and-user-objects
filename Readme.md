@@ -16,7 +16,8 @@ The example XAF application implements a custom permission that allows administr
 
 * [How to: Implement Custom Permission, Role and User Objects](https://docs.devexpress.com/eXpressAppFramework/113384)
 
-![](https://user-images.githubusercontent.com/37070809/227926192-8d40fc1f-2113-4411-a17d-fb0e8930dbca.png)
+![](https://user-images.githubusercontent.com/37070809/227926495-330d0c76-f8f9-416c-ba83-223cda9919ab.png)
+
 
 ## Files to Review:
 
