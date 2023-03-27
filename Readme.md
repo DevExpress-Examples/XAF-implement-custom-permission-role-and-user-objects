@@ -9,13 +9,14 @@
 **[[Run Online]](https://codecentral.devexpress.com/e3794/)**
 <!-- run online end -->
 
+
 This example illustrates how to create custom security objects, such as permissions, roles and users. 
 
 The example XAF application implements a custom permission that allows administrators to control whether or not a user is allowed to use the export feature. The complete description is available in the following documentation article:
 
 * [How to: Implement Custom Permission, Role and User Objects](https://docs.devexpress.com/eXpressAppFramework/113384)
 
-![](https://raw.githubusercontent.com/DevExpress-Examples/how-to-implement-custom-permission-role-and-user-objects-e3794/17.2.3+/media/00ffc31d-8a0d-47e5-a763-d7f07e79e52d.png)
+![](https://user-images.githubusercontent.com/37070809/227926192-8d40fc1f-2113-4411-a17d-fb0e8930dbca.png)
 
 ## Files to Review:
 
