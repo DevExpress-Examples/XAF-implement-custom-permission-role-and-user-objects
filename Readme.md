@@ -17,17 +17,21 @@ The example XAF application implements a custom permission that allows administr
 
 ![](https://raw.githubusercontent.com/DevExpress-Examples/how-to-implement-custom-permission-role-and-user-objects-e3794/17.2.3+/media/00ffc31d-8a0d-47e5-a763-d7f07e79e52d.png)
 
-## Files to Review:
+## Files to Review
 
-* [Program.cs](./CS/SecuredExportExample.MiddleTierSecurityServer/Program.cs) (VB: [Program.vb](./VB/SecuredExportExample.MiddleTierSecurityServer/Program.vb))
-* [Employee.cs](./CS/SecuredExportExample.Module/BusinessObjects/Employee.cs) (VB: [Employee.vb](./VB/SecuredExportExample.Module/BusinessObjects/Employee.vb))
-* [SecuredExportController.cs](./CS/SecuredExportExample.Module/Controllers/SecuredExportController.cs) (VB: [SecuredExportController.vb](./VB/SecuredExportExample.Module/Controllers/SecuredExportController.vb))
-* [Updater.cs](./CS/SecuredExportExample.Module/DatabaseUpdate/Updater.cs) (VB: [Updater.vb](./VB/SecuredExportExample.Module/DatabaseUpdate/Updater.vb))
-* [ExportPermission.cs](./CS/SecuredExportExample.Module/SecurityObjects/ExportPermission.cs) (VB: [ExportPermission.vb](./VB/SecuredExportExample.Module/SecurityObjects/ExportPermission.vb))
-* [ExtendedSecurityRole.cs](./CS/SecuredExportExample.Module/SecurityObjects/ExtendedSecurityRole.cs) (VB: [ExtendedSecurityRole.vb](./VB/SecuredExportExample.Module/SecurityObjects/ExtendedSecurityRole.vb))
-* [Global.asax.cs](./CS/SecuredExportExample.Web/Global.asax.cs)
-* [WebApplication.cs](./CS/SecuredExportExample.Web/WebApplication.cs) (VB: [WebApplication.vb](./VB/SecuredExportExample.Web/WebApplication.vb))
-* [Program.cs](./CS/SecuredExportExample.Win.MiddleTierSecurityClient/Program.cs) (VB: [Program.vb](./VB/SecuredExportExample.Win.MiddleTierSecurityClient/Program.vb))
-* [WinApplication.Designer.cs](./CS/SecuredExportExample.Win.MiddleTierSecurityClient/WinApplication.Designer.cs)
-* [Program.cs](./CS/SecuredExportExample.Win/Program.cs) (VB: [Program.vb](./VB/SecuredExportExample.Win/Program.vb))
-* [WinApplication.Designer.cs](./CS/SecuredExportExample.Win/WinApplication.Designer.cs)
+### Main Module:
+
+* [ExportPermission.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/Security/ExportPermission.cs)
+* [ExportPermissionRequest.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/Security/ExportPermissionRequest.cs)
+* [ExportPermissionRequestProcessor.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/Security/ExportPermissionRequestProcessor.cs)
+* [ExtendedSecurityRole.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/Security/SecuredExportController.cs)
+* [SecuredExportController.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/Security/SecuredExportController.cs)
+* [Updater.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Module/DatabaseUpdate/Updater.cs)
+
+### Blazor Application:
+
+* [Startup.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Blazor.Server/Startup.cs)
+
+### WinForms Application:
+
+* [Startup.cs](./CS/EFCore/MySolutionEF/MySolutionEF.Win/Startup.cs)
