@@ -10,9 +10,9 @@
 <!-- run online end -->
 
 
-This example illustrates how to create custom security objects, such as permissions, roles and users. 
+This example illustrates how to create custom security objects, such as permissions, roles, and users. 
 
-The example XAF application implements a custom permission that allows administrators to control whether or not a user is allowed to use the export feature. The complete description is available in the following documentation article:
+The example XAF application implements a custom permission that allows administrators to control whether a user is allowed to use the export feature. The complete description is available in the following documentation article:
 
 * [How to: Implement Custom Permission, Role and User Objects](https://docs.devexpress.com/eXpressAppFramework/113384)
 
