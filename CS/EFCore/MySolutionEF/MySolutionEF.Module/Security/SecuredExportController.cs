@@ -18,7 +18,7 @@ namespace MySolutionXPO.Module.Security {
         }
         void ExportAction_Executing(object sender, System.ComponentModel.CancelEventArgs e) {
             IRequestSecurity requestSecurity = (IRequestSecurity)Application.Security;
-            if (requestSecurity.IsGranted(new ExportPermissionRequest())) {
+            if (!requestSecurity.IsGranted(new ExportPermissionRequest())) {
                 throw new UserFriendlyException("Export operation is prohibited.");
             }
         }
