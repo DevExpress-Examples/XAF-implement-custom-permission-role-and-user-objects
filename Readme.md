@@ -5,9 +5,6 @@
 <!-- default badges end -->
 
 # XAF - How to Implement Custom Permission, Role and User Objects
-<!-- run online -->
-**[[Run Online]](https://codecentral.devexpress.com/128591442/)**
-<!-- run online end -->
 
 
 This example illustrates how to create custom security objects, such as permissions, roles, and users. 
