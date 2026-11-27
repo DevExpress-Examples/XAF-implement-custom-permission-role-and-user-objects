@@ -80,7 +80,7 @@ public class Updater : ModuleUpdater {
             adminRole.Name = "Administrators";
         }
         adminRole.IsAdministrative = true;
-		userAdmin.Roles.Add(adminRole);
+        userAdmin.Roles.Add(adminRole);
         ObjectSpace.CommitChanges(); //This line persists created object(s).
 #endif
     }
@@ -96,14 +96,16 @@ public class Updater : ModuleUpdater {
             defaultRole = ObjectSpace.CreateObject<ExtendedSecurityRole>();
             defaultRole.Name = "Default";
 
-			defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read, cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ApplicationUser>(SecurityOperations.Read, cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddNavigationPermission(@"Application/NavigationItems/Items/Default/Items/MyDetails", SecurityPermissionState.Allow);
-			defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
-			defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
+            defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword", cm => cm.Oid == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ExtendedSecurityRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
-            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
-			defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifference>(SecurityOperations.ReadWriteAccess, d => d.IsCurrentUserDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, a => a.IsCurrentUserDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifference>(SecurityOperations.Read, d => d.IsSharedDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifferenceAspect>(SecurityOperations.Read, a => a.IsSharedDiff, SecurityPermissionState.Allow);
+            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
 
             defaultRole.AddTypePermission<Contact>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);

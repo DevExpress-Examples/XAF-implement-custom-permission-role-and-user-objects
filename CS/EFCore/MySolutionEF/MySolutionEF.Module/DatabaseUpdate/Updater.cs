@@ -116,8 +116,10 @@ public class Updater : ModuleUpdater {
             defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "ChangePasswordOnFirstLogon", cm => cm.ID == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddMemberPermissionFromLambda<ApplicationUser>(SecurityOperations.Write, "StoredPassword", cm => cm.ID == (Guid)CurrentUserIdOperator.CurrentUserId(), SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ExtendedSecurityRole>(SecurityOperations.Read, SecurityPermissionState.Deny);
-            defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
-            defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifference>(SecurityOperations.ReadWriteAccess, d => d.IsCurrentUserDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifferenceAspect>(SecurityOperations.ReadWriteAccess, a => a.IsCurrentUserDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifference>(SecurityOperations.Read, d => d.IsSharedDiff, SecurityPermissionState.Allow);
+            defaultRole.AddObjectPermissionFromLambda<ModelDifferenceAspect>(SecurityOperations.Read, a => a.IsSharedDiff, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifference>(SecurityOperations.Create, SecurityPermissionState.Allow);
             defaultRole.AddTypePermissionsRecursively<ModelDifferenceAspect>(SecurityOperations.Create, SecurityPermissionState.Allow);
 
